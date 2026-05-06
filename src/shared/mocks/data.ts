@@ -1,4 +1,4 @@
-import type { Client, ClientStatus } from "../features/clients/types";
+import type { Client, ClientStatus } from "../../entities/client/model/types";
 
 const statuses: ClientStatus[] = ["active", "paused", "archived"];
 const companies = [

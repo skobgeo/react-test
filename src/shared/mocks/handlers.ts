@@ -1,5 +1,5 @@
 import { delay, HttpResponse, http } from "msw";
-import type { Client } from "../features/clients/types";
+import type { Client } from "../../entities/client/model/types";
 import { clients } from "./data";
 
 const pageSize = 12;

@@ -1,5 +1,5 @@
-import { http } from "../../api/http";
-import type { Client, ClientFilters, ClientListResponse } from "./types";
+import { http } from "../../../shared/api/http";
+import type { Client, ClientFilters, ClientListResponse } from "../model/types";
 
 export async function getClients(
   page: number,
