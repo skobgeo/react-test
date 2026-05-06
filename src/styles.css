@@ -1,0 +1,36 @@
+body {
+  margin: 0;
+  background: #f6f7f9;
+  color: #1f2933;
+}
+
+.appHeader {
+  align-items: center;
+  border-bottom: 1px solid #d8dee6;
+  display: flex;
+  padding: 0 24px;
+}
+
+.brandLink {
+  color: #15232d;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+
+.clientRow {
+  border: 1px solid #dfe5ec;
+  color: inherit;
+  display: block;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.clientRow + .clientRow {
+  border-top: 0;
+}
+
+.clientRow:hover {
+  background: #edf6f4;
+}
