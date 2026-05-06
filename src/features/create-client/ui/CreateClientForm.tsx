@@ -1,25 +1,35 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Group, NumberInput, Paper, TextInput } from "@mantine/core";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { createClient } from "../../../entities/client/api/clientApi";
 import type { Client } from "../../../entities/client/model/types";
+import {
+  type CreateClientFormValues,
+  createClientSchema,
+} from "../model/schema";
 
 type CreateClientFormProps = {
   onCreated: (client: Client) => void;
 };
 
 export function CreateClientForm({ onCreated }: CreateClientFormProps) {
-  const [newName, setNewName] = useState("");
-  const [newCompany, setNewCompany] = useState("");
-  const [newRevenue, setNewRevenue] = useState<number | string>(0);
+  const form = useForm<CreateClientFormValues>({
+    resolver: zodResolver(createClientSchema),
+    defaultValues: {
+      name: "",
+      company: "",
+      revenue: 0,
+    },
+  });
 
-  async function handleCreateClient() {
+  async function handleCreateClient(values: CreateClientFormValues) {
     try {
       const created = await createClient({
-        name: newName,
-        company: newCompany,
-        email: `${newName.toLowerCase().replaceAll(" ", ".")}@example.com`,
+        name: values.name,
+        company: values.company,
+        email: `${values.name.toLowerCase().replaceAll(" ", ".")}@example.com`,
         status: "active",
-        revenue: Number(newRevenue),
+        revenue: values.revenue,
         notes: "",
       });
 
@@ -37,30 +47,26 @@ export function CreateClientForm({ onCreated }: CreateClientFormProps) {
       });
     }
 
-    setNewName("");
-    setNewCompany("");
-    setNewRevenue(0);
+    form.reset();
   }
 
   return (
     <Paper p="md" withBorder>
       <Group align="end">
-        <TextInput
-          label="New client name"
-          value={newName}
-          onChange={(event) => setNewName(event.currentTarget.value)}
+        <TextInput label="New client name" {...form.register("name")} />
+        <TextInput label="Company" {...form.register("company")} />
+        <Controller
+          control={form.control}
+          name="revenue"
+          render={({ field }) => (
+            <NumberInput
+              label="Revenue"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
-        <TextInput
-          label="Company"
-          value={newCompany}
-          onChange={(event) => setNewCompany(event.currentTarget.value)}
-        />
-        <NumberInput
-          label="Revenue"
-          value={newRevenue}
-          onChange={setNewRevenue}
-        />
-        <Button onClick={handleCreateClient}>Create</Button>
+        <Button onClick={form.handleSubmit(handleCreateClient)}>Create</Button>
       </Group>
     </Paper>
   );

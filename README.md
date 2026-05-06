@@ -11,6 +11,8 @@
 - Mantine UI
 - Axios
 - MSW
+- React Hook Form
+- Zod
 - Biome
 
 Код разложен по Feature-Sliced Design: `app`, `pages`, `widgets`, `features`, `entities`, `shared`.

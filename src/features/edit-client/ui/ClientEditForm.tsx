@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   NumberInput,
   Paper,
@@ -6,7 +7,10 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import type { Client } from "../../../entities/client/model/types";
+import { type EditClientFormValues, editClientSchema } from "../model/schema";
 
 type ClientEditFormProps = {
   client: Client;
@@ -14,73 +18,58 @@ type ClientEditFormProps = {
 };
 
 export function ClientEditForm({ client, onChange }: ClientEditFormProps) {
+  const form = useForm<EditClientFormValues>({
+    resolver: zodResolver(editClientSchema),
+    defaultValues: client,
+  });
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      onChange({
+        ...client,
+        ...values,
+        status: values.status as Client["status"],
+        revenue: Number(values.revenue),
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <Paper p="md" withBorder>
       <Stack>
-        <TextInput
-          label="Name"
-          value={client.name}
-          onChange={(event) => {
-            client.name = event.currentTarget.value;
-            onChange(client);
-          }}
+        <TextInput label="Name" {...form.register("name")} />
+        <TextInput label="Company" {...form.register("company")} />
+        <TextInput label="Email" {...form.register("email")} />
+        <Controller
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <Select
+              label="Status"
+              value={field.value}
+              data={[
+                { value: "active", label: "Active" },
+                { value: "paused", label: "Paused" },
+                { value: "archived", label: "Archived" },
+              ]}
+              onChange={field.onChange}
+            />
+          )}
         />
-        <TextInput
-          label="Company"
-          value={client.company}
-          onChange={(event) =>
-            onChange({
-              ...client,
-              company: event.currentTarget.value,
-            })
-          }
+        <Controller
+          control={form.control}
+          name="revenue"
+          render={({ field }) => (
+            <NumberInput
+              label="Revenue"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
-        <TextInput
-          label="Email"
-          value={client.email}
-          onChange={(event) =>
-            onChange({
-              ...client,
-              email: event.currentTarget.value,
-            })
-          }
-        />
-        <Select
-          label="Status"
-          value={client.status}
-          data={[
-            { value: "active", label: "Active" },
-            { value: "paused", label: "Paused" },
-            { value: "archived", label: "Archived" },
-          ]}
-          onChange={(value) =>
-            onChange({
-              ...client,
-              status: value as Client["status"],
-            })
-          }
-        />
-        <NumberInput
-          label="Revenue"
-          value={client.revenue}
-          onChange={(value) =>
-            onChange({
-              ...client,
-              revenue: Number(value),
-            })
-          }
-        />
-        <Textarea
-          label="Notes"
-          minRows={4}
-          value={client.notes}
-          onChange={(event) =>
-            onChange({
-              ...client,
-              notes: event.currentTarget.value,
-            })
-          }
-        />
+        <Textarea label="Notes" minRows={4} {...form.register("notes")} />
       </Stack>
     </Paper>
   );
