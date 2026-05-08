@@ -1,0 +1,40 @@
+.badge {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 6px 9px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.draft {
+  background: #eef2f7;
+  color: #455468;
+}
+
+.scheduled {
+  background: #e6f4ff;
+  color: #075985;
+}
+
+.in_transit {
+  background: #ecfdf3;
+  color: #047857;
+}
+
+.blocked {
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.delivered {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.critical {
+  background: #fff7ed;
+  color: #c2410c;
+}

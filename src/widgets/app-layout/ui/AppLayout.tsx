@@ -1,17 +1,17 @@
-import { AppShell } from "@mantine/core";
 import { Link, Outlet } from "react-router";
+import styles from "./AppLayout.module.css";
 
 export function AppLayout() {
   return (
-    <AppShell header={{ height: 58 }} padding="md">
-      <AppShell.Header className="appHeader">
+    <div className={styles.shell}>
+      <header className={styles.header}>
         <Link to="/" className="brandLink">
-          Client Directory
+          Shipment Control
         </Link>
-      </AppShell.Header>
-      <AppShell.Main>
+      </header>
+      <main className={styles.main}>
         <Outlet />
-      </AppShell.Main>
-    </AppShell>
+      </main>
+    </div>
   );
 }

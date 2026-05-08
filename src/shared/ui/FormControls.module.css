@@ -1,0 +1,35 @@
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.label {
+  color: #334e68;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.input,
+.select,
+.textarea {
+  background: #ffffff;
+  border: 1px solid #bcccdc;
+  border-radius: 7px;
+  color: #243b53;
+  font: inherit;
+  min-height: 38px;
+  padding: 8px 10px;
+}
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.checkbox {
+  align-items: center;
+  color: #334e68;
+  display: flex;
+  font-size: 14px;
+  gap: 8px;
+}

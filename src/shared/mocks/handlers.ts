@@ -1,25 +1,47 @@
 import { delay, HttpResponse, http } from "msw";
-import type { Client } from "../../entities/client/model/types";
-import { clients } from "./data";
+import type { Shipment } from "../../entities/shipment/model/types";
+import { shipments } from "./data";
 
 const pageSize = 12;
 
 export const handlers = [
-  http.get("/api/clients", async ({ request }) => {
+  http.get("/api/shipments", async ({ request }) => {
     await delay(250);
 
     const url = new URL(request.url);
     const page = Number(url.searchParams.get("page") ?? "1");
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
     const status = url.searchParams.get("status") ?? "all";
+    const priority = url.searchParams.get("priority") ?? "all";
+    const delayedOnly = url.searchParams.get("delayedOnly") === "true";
+    const sortField = url.searchParams.get("sortField") ?? "eta";
+    const sortDirection = url.searchParams.get("sortDirection") ?? "asc";
 
-    const filtered = clients.filter((client) => {
+    const filtered = shipments.filter((shipment) => {
       const matchesSearch =
-        client.name.toLowerCase().includes(search) ||
-        client.company.toLowerCase().includes(search);
-      const matchesStatus = status === "all" || client.status === status;
+        shipment.reference.toLowerCase().includes(search) ||
+        shipment.customer.toLowerCase().includes(search) ||
+        shipment.destination.toLowerCase().includes(search);
+      const matchesStatus = status === "all" || shipment.status === status;
+      const matchesPriority =
+        priority === "all" || shipment.priority === priority;
+      const matchesDelay =
+        !delayedOnly ||
+        (shipment.status !== "delivered" &&
+          new Date(shipment.eta).getTime() < Date.now());
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesPriority && matchesDelay;
+    });
+
+    filtered.sort((left, right) => {
+      const leftValue =
+        sortField === "value" ? left.value : new Date(left.eta).getTime();
+      const rightValue =
+        sortField === "value" ? right.value : new Date(right.eta).getTime();
+
+      return sortDirection === "desc"
+        ? rightValue - leftValue
+        : leftValue - rightValue;
     });
 
     const start = (page - 1) * pageSize;
@@ -33,75 +55,74 @@ export const handlers = [
     });
   }),
 
-  http.get("/api/clients/:id", async ({ params }) => {
+  http.get("/api/shipments/:id", async ({ params }) => {
     await delay(200);
 
-    const client = clients.find((item) => item.id === params.id);
-    if (!client) {
+    const shipment = shipments.find((item) => item.id === params.id);
+    if (!shipment) {
       return HttpResponse.json(
-        { message: "Client not found" },
+        { message: "Shipment not found" },
         { status: 404 },
       );
     }
 
-    return HttpResponse.json(client);
+    return HttpResponse.json(shipment);
   }),
 
-  http.post("/api/clients", async ({ request }) => {
+  http.post("/api/shipments", async ({ request }) => {
     await delay(300);
 
-    const body = (await request.json()) as {
-      name?: string;
-      company?: string;
-      email?: string;
-      status?: string;
-      revenue?: number;
-      notes?: string;
-    };
+    const body = (await request.json()) as Partial<Shipment>;
 
-    if (!body.name?.trim()) {
+    if (!body.customer?.trim()) {
       return HttpResponse.json(
-        { message: "Name is required" },
+        { message: "Customer is required" },
         { status: 400 },
       );
     }
 
-    const duplicate = clients.some(
-      (client) => client.name.toLowerCase() === body.name?.trim().toLowerCase(),
+    const duplicate = shipments.some(
+      (shipment) =>
+        shipment.reference.toLowerCase() ===
+        body.reference?.trim().toLowerCase(),
     );
 
     if (duplicate) {
       return HttpResponse.json(
-        { message: "Client with this name already exists" },
+        { message: "Shipment with this reference already exists" },
         { status: 409 },
       );
     }
 
-    const client: Client = {
+    const shipment: Shipment = {
       id: crypto.randomUUID(),
-      name: body.name.trim(),
-      company: body.company?.trim() || "Unknown",
-      email: body.email?.trim() || "unknown@example.com",
-      status:
-        body.status === "paused" || body.status === "archived"
-          ? body.status
-          : "active",
-      revenue: Number(body.revenue ?? 0),
+      reference: body.reference?.trim() || `SHP-${Date.now()}`,
+      customer: body.customer.trim(),
+      origin: body.origin?.trim() || "Chicago, IL",
+      destination: body.destination?.trim() || "Unassigned",
+      carrier: body.carrier?.trim() || "Unassigned",
+      status: body.status ?? "draft",
+      priority: body.priority ?? "normal",
+      eta: body.eta ?? new Date().toISOString(),
       createdAt: new Date().toISOString(),
+      value: Number(body.value ?? 0),
+      owner: body.owner ?? "Ops Desk",
       notes: body.notes ?? "",
+      lines: body.lines ?? [],
+      checkpoints: body.checkpoints ?? [],
     };
 
-    clients.unshift(client);
-    return HttpResponse.json(client, { status: 201 });
+    shipments.unshift(shipment);
+    return HttpResponse.json(shipment, { status: 201 });
   }),
 
-  http.patch("/api/clients/:id", async ({ params, request }) => {
+  http.patch("/api/shipments/:id", async ({ params, request }) => {
     await delay(350);
 
-    const index = clients.findIndex((client) => client.id === params.id);
+    const index = shipments.findIndex((shipment) => shipment.id === params.id);
     if (index === -1) {
       return HttpResponse.json(
-        { message: "Client not found" },
+        { message: "Shipment not found" },
         { status: 404 },
       );
     }
@@ -109,22 +130,22 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
 
     if (
-      String(body.name ?? "")
+      String(body.reference ?? "")
         .toLowerCase()
         .includes("fail")
     ) {
       return HttpResponse.json(
-        { message: "Backend rejected this client name" },
+        { message: "Backend rejected this reference" },
         { status: 500 },
       );
     }
 
-    clients[index] = {
-      ...clients[index],
+    shipments[index] = {
+      ...shipments[index],
       ...body,
-      id: clients[index].id,
+      id: shipments[index].id,
     };
 
-    return HttpResponse.json(clients[index]);
+    return HttpResponse.json(shipments[index]);
   }),
 ];

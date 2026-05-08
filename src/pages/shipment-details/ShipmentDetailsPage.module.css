@@ -1,0 +1,44 @@
+.page {
+  display: grid;
+  gap: 16px;
+}
+
+.header {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.backLink {
+  color: #0b7285;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.title {
+  font-size: 30px;
+  margin: 8px 0 8px;
+}
+
+.meta {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.loading,
+.notFound {
+  background: #ffffff;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  color: #486581;
+  padding: 32px;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .header {
+    flex-direction: column;
+  }
+}
