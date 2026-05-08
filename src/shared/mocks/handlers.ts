@@ -4,6 +4,10 @@ import { shipments } from "./data";
 
 const pageSize = 12;
 
+function shouldFailRandomly() {
+  return Math.random() < 0.5;
+}
+
 export const handlers = [
   http.get("/api/shipments", async ({ request }) => {
     await delay(250);
@@ -57,6 +61,13 @@ export const handlers = [
 
   http.get("/api/shipments/:id", async ({ params }) => {
     await delay(200);
+
+    if (shouldFailRandomly()) {
+      return HttpResponse.json(
+        { message: "Backend failed while loading shipment" },
+        { status: 500 },
+      );
+    }
 
     const shipment = shipments.find((item) => item.id === params.id);
     if (!shipment) {
@@ -135,6 +146,13 @@ export const handlers = [
     }
 
     const body = (await request.json()) as Record<string, unknown>;
+
+    if (shouldFailRandomly()) {
+      return HttpResponse.json(
+        { message: "Backend failed while saving shipment" },
+        { status: 500 },
+      );
+    }
 
     if (
       String(body.reference ?? "")
