@@ -81,6 +81,13 @@ export const handlers = [
       );
     }
 
+    if (body.customer.toLowerCase().includes("fail")) {
+      return HttpResponse.json(
+        { message: "Backend failed while creating customer" },
+        { status: 500 },
+      );
+    }
+
     const duplicate = shipments.some(
       (shipment) =>
         shipment.reference.toLowerCase() ===

@@ -11,15 +11,14 @@ export function QuickCreateShipment({ onCreate }: QuickCreateShipmentProps) {
   const [customer, setCustomer] = useState("");
   const [destination, setDestination] = useState("");
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleCreateClick() {
     await onCreate(customer, destination);
     setCustomer("");
     setDestination("");
   }
 
   return (
-    <form className={styles.panel} onSubmit={handleSubmit}>
+    <div className={styles.panel}>
       <Field label="New customer">
         <TextInput
           value={customer}
@@ -32,7 +31,9 @@ export function QuickCreateShipment({ onCreate }: QuickCreateShipmentProps) {
           onChange={(event) => setDestination(event.currentTarget.value)}
         />
       </Field>
-      <Button type="submit">Create shipment</Button>
-    </form>
+      <Button type="button" onClick={handleCreateClick}>
+        Create shipment
+      </Button>
+    </div>
   );
 }

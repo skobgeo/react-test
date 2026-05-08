@@ -122,23 +122,51 @@ export class ShipmentStore {
   }
 
   async quickCreate(customer: string, destination: string) {
-    const created = await createShipment({
-      reference: `EXP-${Date.now()}`,
-      customer,
-      origin: "Chicago, IL",
-      destination,
-      carrier: "Unassigned",
+    const optimisticShipment: Shipment = {
+      id: `local-${Date.now()}`,
+      reference: "",
+      customer: "",
+      origin: "",
+      destination: "",
+      carrier: "",
       status: "draft",
       priority: "normal",
       eta: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
       value: 0,
       owner: "Ops Desk",
       notes: "",
       lines: [],
       checkpoints: [],
-    });
+    };
 
-    this.shipments.unshift(created);
+    this.shipments.unshift(optimisticShipment);
+
+    try {
+      const created = await createShipment({
+        reference: `EXP-${Date.now()}`,
+        customer,
+        origin: "Chicago, IL",
+        destination,
+        carrier: "Unassigned",
+        status: optimisticShipment.status,
+        priority: optimisticShipment.priority,
+        eta: optimisticShipment.eta,
+        value: optimisticShipment.value,
+        owner: optimisticShipment.owner,
+        notes: optimisticShipment.notes,
+        lines: optimisticShipment.lines,
+        checkpoints: optimisticShipment.checkpoints,
+      });
+
+      runInAction(() => {
+        this.shipments = this.shipments.map((shipment) =>
+          shipment.id === optimisticShipment.id ? created : shipment,
+        );
+      });
+    } catch {
+      return;
+    }
   }
 }
 
