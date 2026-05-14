@@ -1,25 +1,35 @@
 import { delay, HttpResponse, http } from "msw";
-import type { Client } from "../../entities/client/model/types";
-import { clients } from "./data";
+import type { Product } from "../../entities/product/model/types";
+import { products } from "./data";
 
 const pageSize = 12;
 
 export const handlers = [
-  http.get("/api/clients", async ({ request }) => {
+  http.get("/api/products", async ({ request }) => {
     await delay(250);
 
     const url = new URL(request.url);
     const page = Number(url.searchParams.get("page") ?? "1");
     const search = url.searchParams.get("search")?.toLowerCase() ?? "";
     const status = url.searchParams.get("status") ?? "all";
+    const category = url.searchParams.get("category")?.toLowerCase() ?? "";
 
-    const filtered = clients.filter((client) => {
+    if (search.includes("break")) {
+      return HttpResponse.json(
+        { message: "Search service is unavailable" },
+        { status: 503 },
+      );
+    }
+
+    const filtered = products.filter((product) => {
       const matchesSearch =
-        client.name.toLowerCase().includes(search) ||
-        client.company.toLowerCase().includes(search);
-      const matchesStatus = status === "all" || client.status === status;
+        product.title.toLowerCase().includes(search) ||
+        product.sku.toLowerCase().includes(search);
+      const matchesStatus = status === "all" || product.status === status;
+      const matchesCategory =
+        !category || product.category.toLowerCase().includes(category);
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesCategory;
     });
 
     const start = (page - 1) * pageSize;
@@ -33,75 +43,84 @@ export const handlers = [
     });
   }),
 
-  http.get("/api/clients/:id", async ({ params }) => {
+  http.get("/api/products/:id", async ({ params }) => {
     await delay(200);
 
-    const client = clients.find((item) => item.id === params.id);
-    if (!client) {
+    const product = products.find((item) => item.id === params.id);
+    if (!product) {
       return HttpResponse.json(
-        { message: "Client not found" },
+        { message: "Product not found" },
         { status: 404 },
       );
     }
 
-    return HttpResponse.json(client);
+    return HttpResponse.json(product);
   }),
 
-  http.post("/api/clients", async ({ request }) => {
+  http.post("/api/products", async ({ request }) => {
     await delay(300);
 
     const body = (await request.json()) as {
-      name?: string;
-      company?: string;
-      email?: string;
+      title?: string;
+      sku?: string;
+      category?: string;
       status?: string;
-      revenue?: number;
-      notes?: string;
+      price?: number;
+      stock?: number;
+      description?: string;
     };
 
-    if (!body.name?.trim()) {
+    if (!body.title?.trim()) {
       return HttpResponse.json(
-        { message: "Name is required" },
+        { message: "Title is required" },
         { status: 400 },
       );
     }
 
-    const duplicate = clients.some(
-      (client) => client.name.toLowerCase() === body.name?.trim().toLowerCase(),
+    const duplicate = products.some(
+      (product) => product.sku.toLowerCase() === body.sku?.trim().toLowerCase(),
     );
 
     if (duplicate) {
       return HttpResponse.json(
-        { message: "Client with this name already exists" },
+        { message: "Product with this SKU already exists" },
         { status: 409 },
       );
     }
 
-    const client: Client = {
+    const product: Product = {
       id: crypto.randomUUID(),
-      name: body.name.trim(),
-      company: body.company?.trim() || "Unknown",
-      email: body.email?.trim() || "unknown@example.com",
+      title: body.title.trim(),
+      sku: body.sku?.trim() || "NO-SKU",
+      category: body.category?.trim() || "Unsorted",
       status:
-        body.status === "paused" || body.status === "archived"
+        body.status === "draft" || body.status === "archived"
           ? body.status
           : "active",
-      revenue: Number(body.revenue ?? 0),
+      price: Number(body.price ?? 0),
+      stock: Number(body.stock ?? 0),
       createdAt: new Date().toISOString(),
-      notes: body.notes ?? "",
+      description: body.description ?? "",
     };
 
-    clients.unshift(client);
-    return HttpResponse.json(client, { status: 201 });
+    if (product.title.toLowerCase().includes("server")) {
+      return HttpResponse.json(
+        { message: "Backend failed while saving product" },
+        { status: 500 },
+      );
+    }
+
+    products.unshift(product);
+    return HttpResponse.json(product, { status: 201 });
   }),
 
-  http.patch("/api/clients/:id", async ({ params, request }) => {
+  http.patch("/api/products/:id", async ({ params, request }) => {
     await delay(350);
 
-    const index = clients.findIndex((client) => client.id === params.id);
+    const index = products.findIndex((product) => product.id === params.id);
     if (index === -1) {
       return HttpResponse.json(
-        { message: "Client not found" },
+        { message: "Product not found" },
         { status: 404 },
       );
     }
@@ -109,22 +128,22 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
 
     if (
-      String(body.name ?? "")
+      String(body.title ?? "")
         .toLowerCase()
         .includes("fail")
     ) {
       return HttpResponse.json(
-        { message: "Backend rejected this client name" },
+        { message: "Backend rejected this product title" },
         { status: 500 },
       );
     }
 
-    clients[index] = {
-      ...clients[index],
+    products[index] = {
+      ...products[index],
       ...body,
-      id: clients[index].id,
+      id: products[index].id,
     };
 
-    return HttpResponse.json(clients[index]);
+    return HttpResponse.json(products[index]);
   }),
 ];

@@ -1,0 +1,29 @@
+.page {
+  display: grid;
+  gap: 16px;
+}
+
+.header {
+  align-items: start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header h1 {
+  font-size: 32px;
+  line-height: 1.15;
+  margin: 4px 0 10px;
+}
+
+.back {
+  color: #146c63;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}

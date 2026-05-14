@@ -1,0 +1,37 @@
+.list {
+  overflow: hidden;
+}
+
+.row {
+  align-items: center;
+  color: inherit;
+  display: flex;
+  justify-content: space-between;
+  min-height: 70px;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.row + .row {
+  border-top: 1px solid #dfe5ec;
+}
+
+.row:hover {
+  background: #edf6f4;
+}
+
+.title {
+  font-weight: 800;
+}
+
+.meta {
+  color: #667789;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.summary {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}

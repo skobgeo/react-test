@@ -1,0 +1,34 @@
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.label {
+  color: #3f4f5d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.input,
+.textarea {
+  background: #ffffff;
+  border: 1px solid #cfd7df;
+  border-radius: 6px;
+  color: #17212b;
+  min-height: 38px;
+  padding: 0 10px;
+}
+
+.textarea {
+  min-height: 96px;
+  padding: 10px;
+  resize: vertical;
+}
+
+.error {
+  color: #b42318;
+  font-size: 12px;
+  line-height: 16px;
+  min-height: 16px;
+}

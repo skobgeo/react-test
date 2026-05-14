@@ -1,30 +1,34 @@
-import type { Client, ClientStatus } from "../../entities/client/model/types";
+import type {
+  Product,
+  ProductStatus,
+} from "../../entities/product/model/types";
 
-const statuses: ClientStatus[] = ["active", "paused", "archived"];
-const companies = [
-  "Northstar Labs",
-  "Riverbank Studio",
-  "Apex Retail",
-  "Beacon Health",
-  "Copperline Foods",
-  "Orbit Logistics",
-  "Signal Works",
-  "Summit Finance",
+const statuses: ProductStatus[] = ["active", "draft", "archived"];
+const categories = [
+  "Laptops",
+  "Displays",
+  "Audio",
+  "Accessories",
+  "Storage",
+  "Networking",
+  "Cameras",
+  "Office",
 ];
 
-export const clients: Client[] = Array.from({ length: 72 }, (_, index) => {
+export const products: Product[] = Array.from({ length: 72 }, (_, index) => {
   const number = index + 1;
   return {
     id: String(number),
-    name: `Client ${number}`,
-    company: companies[index % companies.length],
-    email: `client${number}@example.com`,
+    title: `Product ${number}`,
+    sku: `SKU-${String(number).padStart(4, "0")}`,
+    category: categories[index % categories.length],
     status: statuses[index % statuses.length],
-    revenue: 3000 + index * 470,
+    price: 49 + index * 17,
+    stock: 8 + (index % 20),
     createdAt: new Date(2025, index % 12, (index % 27) + 1).toISOString(),
-    notes:
+    description:
       index % 5 === 0
-        ? "Requires manual approval for contract changes."
-        : "Regular account with quarterly check-ins.",
+        ? "Requires manual warehouse approval before publishing."
+        : "Standard catalog item with quarterly price review.",
   };
 });

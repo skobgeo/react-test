@@ -1,0 +1,27 @@
+.page {
+  display: grid;
+  gap: 16px;
+}
+
+.header {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header h1 {
+  font-size: 32px;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.header p {
+  color: #667789;
+  margin: 6px 0 0;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: 18px;
+}

@@ -1,0 +1,7 @@
+.form {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(120px, 1fr)) auto;
+  padding: 16px;
+}

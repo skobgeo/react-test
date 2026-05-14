@@ -1,25 +1,35 @@
-import { MantineProvider } from "@mantine/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { ClientDetailsPage } from "../pages/client-details/ClientDetailsPage";
-import { ClientsPage } from "../pages/clients/ClientsPage";
+import { ProductDetailsPage } from "../pages/product-details/ProductDetailsPage";
+import { ProductsPage } from "../pages/products/ProductsPage";
 import { AppLayout } from "../widgets/app-layout/ui/AppLayout";
-import { theme } from "./theme";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
     children: [
-      { index: true, element: <ClientsPage /> },
-      { path: "clients/:clientId", element: <ClientDetailsPage /> },
+      { index: true, element: <ProductsPage /> },
+      { path: "products/:productId", element: <ProductDetailsPage /> },
     ],
   },
 ]);
 
 export function App() {
   return (
-    <MantineProvider theme={theme}>
+    <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-    </MantineProvider>
+    </QueryClientProvider>
   );
 }

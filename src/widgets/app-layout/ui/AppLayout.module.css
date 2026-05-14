@@ -1,0 +1,18 @@
+.shell {
+  min-height: 100vh;
+}
+
+.header {
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #d8dee6;
+  display: flex;
+  height: 58px;
+  padding: 0 24px;
+}
+
+.main {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 20px;
+}

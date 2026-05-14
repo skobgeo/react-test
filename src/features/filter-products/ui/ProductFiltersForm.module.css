@@ -1,0 +1,6 @@
+.form {
+  align-items: end;
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+}
