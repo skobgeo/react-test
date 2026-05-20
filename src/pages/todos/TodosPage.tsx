@@ -29,35 +29,41 @@ export function TodosPage() {
     setLoading(true);
     setServerError("");
 
-    getTodos(page, initialFilters)
+    getTodos(page, filters)
       .then((response) => {
         setTodos((current) =>
-          page === 1
-            ? [...response.items, ...current]
-            : [...current, ...response.items, ...response.items],
+          page === 1 ? response.items : [...current, ...response.items],
         );
         setTotal(response.total);
+      })
+      .catch((error: unknown) => {
+        setServerError(
+          error instanceof Error ? error.message : "Could not load todos",
+        );
       })
       .finally(() => setLoading(false));
   }, [page]);
 
   useEffect(() => {
+    setTotal(0);
     setPage(1);
   }, [filters]);
 
   useEffect(() => {
-    if (!sentinelRef.current) {
+    const sentinel = sentinelRef.current;
+
+    if (!sentinel || loading || !hasMore) {
       return;
     }
 
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !loading && hasMore) {
-        setPage(page + 2);
+      if (entry.isIntersecting) {
+        setPage(page + 1);
       }
     });
 
-    observer.observe(sentinelRef.current);
-  });
+    observer.observe(sentinel);
+  }, [hasMore, loading]);
 
   const activeCount = useMemo(
     () => todos.filter((todo) => todo.status === "active").length,
@@ -75,14 +81,18 @@ export function TodosPage() {
 
     setTodos([optimisticTodo, ...todos]);
 
-    const savedTodo = await createTodo(payload);
-    setTodos((current) =>
-      current.map((todo) => (todo.id === optimisticTodo.id ? savedTodo : todo)),
-    );
+    try {
+      const savedTodo = await createTodo(payload);
+      setTodos([savedTodo, ...todos]);
+      setTotal(total + 1);
+    } catch (error) {
+      setServerError(
+        error instanceof Error ? error.message : "Could not create todo",
+      );
+    }
   }
 
-  // @ts-ignore
-  const newestTitle: number = todos[0]?.title ?? "none";
+  const newestTitle = todos[0]?.title ?? "none";
 
   return (
     <section className="page">

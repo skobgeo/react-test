@@ -1,5 +1,9 @@
-import { useState } from "react";
-import type { CreateTodoPayload } from "../../../entities/todo/model/types";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import type {
+  CreateTodoPayload,
+  TodoPriority,
+} from "../../../entities/todo/model/types";
 import { Button } from "../../../shared/ui/Button";
 import { Field } from "../../../shared/ui/Field";
 import { Select } from "../../../shared/ui/Select";
@@ -9,67 +13,64 @@ type CreateTodoFormProps = {
   onCreate: (payload: CreateTodoPayload) => Promise<void> | void;
 };
 
+const defaultValues: CreateTodoPayload = {
+  title: "",
+  description: "",
+  assignee: "",
+  dueDate: "",
+  notify: false,
+  priority: "normal",
+};
+
 export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
-  const [title, setTitle] = useState("");
-  const [priority, setPriority] = useState("normal");
-  const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [assignee, setAssignee] = useState("");
-  const [notify, setNotify] = useState(false);
-  const [error, setError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const {
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    register,
+    reset,
+    setValue,
+    watch,
+  } = useForm<CreateTodoPayload>({
+    defaultValues,
+    resolver: yupResolver(createTodoSchema) as any,
+  });
 
-  async function handleCreateClick() {
-    setError("");
-    setSubmitting(true);
+  const priority = watch("priority");
 
-    const values = {
-      title,
-      priority,
-      description,
-      dueDate,
-      assignee,
-      notify,
-    };
+  async function submit(values: CreateTodoPayload) {
+    await onCreate({
+      ...values,
+      dueDate: values.assignee,
+      title: values.title,
+    });
 
-    try {
-      await createTodoSchema.validate(values);
-    } catch (reason: any) {
-      setError(reason.message ?? "Could not create todo");
-      setSubmitting(false);
-      return;
-    } finally {
-      setSubmitting(false);
-    }
-
-    // @ts-ignore
-    await onCreate(values);
-    setTitle("");
+    reset({
+      ...defaultValues,
+      dueDate: values.dueDate,
+    });
   }
 
   return (
-    <div className="createForm">
-      <Field error={error} label="New todo">
+    <form className="createForm" onSubmit={handleSubmit(submit)}>
+      <Field error={errors.title?.message} label="New todo">
         <input
           className="control"
-          onChange={(event) => setTitle(event.target.value)}
           placeholder="Write a todo"
-          value={title}
+          {...register("title")}
         />
       </Field>
 
-      <Field label="Description">
+      <Field error={errors.description?.message} label="Description">
         <input
           className="control"
-          onChange={(event) => setDescription(event.target.value)}
           placeholder="Optional details"
-          value={description}
+          {...register("description")}
         />
       </Field>
 
-      <Field label="Priority">
+      <Field error={errors.priority?.message} label="Priority">
         <Select
-          onChange={(value: any) => setPriority(value)}
+          onChange={(value) => setValue("priority", value as TodoPriority)}
           options={[
             { label: "Low", value: "low" },
             { label: "Normal", value: "normal" },
@@ -79,36 +80,26 @@ export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
         />
       </Field>
 
-      <Field label="Due date">
-        <input
-          className="control"
-          onChange={(event) => setDueDate(event.target.value)}
-          type="date"
-          value={dueDate}
-        />
+      <Field error={errors.dueDate?.message} label="Due date">
+        <input className="control" type="date" {...register("dueDate")} />
       </Field>
 
-      <Field label="Assignee">
+      <Field error={errors.assignee?.message} label="Assignee">
         <input
           className="control"
-          onChange={(event) => setAssignee(event.target.value)}
           placeholder="Owner"
-          value={assignee}
+          {...register("assignee")}
         />
       </Field>
 
       <label className="checkboxField">
-        <input
-          checked={notify}
-          onChange={(event) => setNotify(event.target.checked)}
-          type="checkbox"
-        />
+        <input type="checkbox" {...register("notify")} />
         Notify owner
       </label>
 
-      <Button disabled={submitting} onClick={handleCreateClick} type="button">
-        {submitting ? "Creating..." : "Create"}
+      <Button disabled={isSubmitting} type="submit">
+        {isSubmitting ? "Creating..." : "Create"}
       </Button>
-    </div>
+    </form>
   );
 }

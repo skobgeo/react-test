@@ -4,6 +4,15 @@ import { todos } from "./data";
 
 const pageSize = 10;
 
+type TodoCreateBody = {
+  title?: unknown;
+  description?: unknown;
+  assignee?: unknown;
+  dueDate?: unknown;
+  notify?: unknown;
+  priority?: unknown;
+};
+
 export const handlers = [
   http.get("/api/todos", async ({ request }) => {
     await delay(220);
@@ -47,7 +56,7 @@ export const handlers = [
   http.post("/api/todos", async ({ request }) => {
     await delay(350);
 
-    const body = (await request.json()) as any;
+    const body = (await request.json()) as TodoCreateBody;
 
     if (Math.random() < 0.25) {
       return HttpResponse.json(
@@ -63,7 +72,11 @@ export const handlers = [
       );
     }
 
-    if (String(body.title).toLowerCase().includes("fail")) {
+    if (
+      String(body.title ?? "")
+        .toLowerCase()
+        .includes("fail")
+    ) {
       return HttpResponse.json(
         { message: "Backend rejected this todo" },
         { status: 500 },
@@ -72,8 +85,15 @@ export const handlers = [
 
     const todo: Todo = {
       id: crypto.randomUUID(),
-      title: body.title.trim(),
-      priority: body.priority ?? "normal",
+      title: String(body.title ?? "").trim(),
+      description: String(body.description ?? "").trim(),
+      assignee: String(body.assignee ?? "").trim(),
+      dueDate: String(body.dueDate ?? ""),
+      notify: Boolean(body.notify),
+      priority:
+        body.priority === "low" || body.priority === "high"
+          ? body.priority
+          : "normal",
       status: "active",
       createdAt: new Date().toISOString(),
     };

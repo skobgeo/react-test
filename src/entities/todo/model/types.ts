@@ -4,6 +4,10 @@ export type TodoPriority = "low" | "normal" | "high";
 export type Todo = {
   id: string;
   title: string;
+  description?: string;
+  assignee?: string;
+  dueDate?: string;
+  notify?: boolean;
   status: TodoStatus;
   priority: TodoPriority;
   createdAt: string;
@@ -23,5 +27,9 @@ export type TodoListResponse = {
 
 export type CreateTodoPayload = {
   title: string;
+  description: string;
+  assignee: string;
+  dueDate: string;
+  notify: boolean;
   priority: TodoPriority;
 };

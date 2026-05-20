@@ -1,6 +1,10 @@
 import * as yup from "yup";
 
 export const createTodoSchema = yup.object({
-  title: yup.string().required("Title is required"),
-  priority: yup.string().oneOf(["low", "normal", "high"]).required(),
+  title: yup.string(),
+  description: yup.string(),
+  assignee: yup.string(),
+  dueDate: yup.string(),
+  notify: yup.boolean(),
+  priority: yup.string(),
 });

@@ -11,10 +11,12 @@
     "format": "biome format --write ."
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@vitejs/plugin-react": "^5.1.1",
     "msw": "^2.12.4",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "react-hook-form": "^7.76.0",
     "react-router": "^7.10.1",
     "yup": "^1.7.1"
   },
