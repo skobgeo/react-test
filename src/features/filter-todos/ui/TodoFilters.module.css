@@ -1,0 +1,33 @@
+.filters {
+  align-items: end;
+  background: #ffffff;
+  border: 1px solid #d9e0e7;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr 160px;
+  padding: 16px;
+}
+
+.control {
+  background: #ffffff;
+  border: 1px solid #bcc7d3;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: #17202a;
+  font: inherit;
+  height: 40px;
+  padding: 0 10px;
+  width: 100%;
+}
+
+.control:focus {
+  border-color: #226f7a;
+  outline: 2px solid #c6eef1;
+}
+
+@media (max-width: 720px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}

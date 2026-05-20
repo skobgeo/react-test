@@ -1,0 +1,38 @@
+.page {
+  display: grid;
+  gap: 18px;
+}
+
+.pageHeader {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pageHeader h1 {
+  font-size: 32px;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+
+.pageHeader p {
+  color: #657180;
+  margin: 0;
+}
+
+.alert {
+  background: #fff1f0;
+  border: 1px solid #ffc8c4;
+  border-radius: 6px;
+  color: #9f1d16;
+  padding: 10px 12px;
+}
+
+.sentinel {
+  height: 2px;
+}
+
+.loading {
+  color: #657180;
+  text-align: center;
+}

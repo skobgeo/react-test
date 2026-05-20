@@ -1,0 +1,15 @@
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field span {
+  color: #3c4652;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field small {
+  color: #b3261e;
+  font-size: 12px;
+}

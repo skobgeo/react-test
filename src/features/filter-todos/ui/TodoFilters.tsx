@@ -2,6 +2,7 @@ import type { TodoFilters as TodoFiltersModel } from "../../../entities/todo/mod
 import { Button } from "../../../shared/ui/Button";
 import { Field } from "../../../shared/ui/Field";
 import { Select } from "../../../shared/ui/Select";
+import styles from "./TodoFilters.module.css";
 
 type TodoFiltersProps = {
   value: TodoFiltersModel;
@@ -10,10 +11,10 @@ type TodoFiltersProps = {
 
 export function TodoFilters({ value, onChange }: TodoFiltersProps) {
   return (
-    <div className="filters">
+    <div className={styles.filters}>
       <Field label="Search">
         <input
-          className="control"
+          className={styles.control}
           onChange={(event) =>
             onChange({ ...value, search: event.target.value })
           }

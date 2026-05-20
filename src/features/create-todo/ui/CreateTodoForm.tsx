@@ -1,13 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import type {
-  CreateTodoPayload,
-  TodoPriority,
-} from "../../../entities/todo/model/types";
+import type { CreateTodoPayload } from "../../../entities/todo/model/types";
 import { Button } from "../../../shared/ui/Button";
 import { Field } from "../../../shared/ui/Field";
 import { Select } from "../../../shared/ui/Select";
 import { createTodoSchema } from "../model/schema";
+import styles from "./CreateTodoForm.module.css";
 
 type CreateTodoFormProps = {
   onCreate: (payload: CreateTodoPayload) => Promise<void> | void;
@@ -53,10 +51,10 @@ export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
   const handleCreateClick = handleSubmit(submit);
 
   return (
-    <div className="createForm">
+    <div className={styles.createForm}>
       <Field error={errors.title?.message} label="New todo">
         <input
-          className="control"
+          className={styles.control}
           placeholder="Write a todo"
           {...register("title")}
         />
@@ -64,7 +62,7 @@ export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
 
       <Field error={errors.description?.message} label="Description">
         <input
-          className="control"
+          className={styles.control}
           placeholder="Optional details"
           {...register("description")}
         />
@@ -72,7 +70,7 @@ export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
 
       <Field error={errors.priority?.message} label="Priority">
         <Select
-          onChange={(value) => setValue("priority", value as TodoPriority)}
+          onChange={(value: any) => setValue("priority", value)}
           options={[
             { label: "Low", value: "low" },
             { label: "Normal", value: "normal" },
@@ -83,18 +81,22 @@ export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
       </Field>
 
       <Field error={errors.dueDate?.message} label="Due date">
-        <input className="control" type="date" {...register("dueDate")} />
+        <input
+          className={styles.control}
+          type="date"
+          {...register("dueDate")}
+        />
       </Field>
 
       <Field error={errors.assignee?.message} label="Assignee">
         <input
-          className="control"
+          className={styles.control}
           placeholder="Owner"
           {...register("assignee")}
         />
       </Field>
 
-      <label className="checkboxField">
+      <label className={styles.checkboxField}>
         <input type="checkbox" {...register("notify")} />
         Notify owner
       </label>

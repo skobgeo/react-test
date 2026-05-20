@@ -8,6 +8,7 @@ import type {
 import { TodoList } from "../../entities/todo/ui/TodoList";
 import { CreateTodoForm } from "../../features/create-todo/ui/CreateTodoForm";
 import { TodoFilters } from "../../features/filter-todos/ui/TodoFilters";
+import styles from "./TodosPage.module.css";
 
 const initialFilters: TodoFilterValues = {
   search: "",
@@ -95,8 +96,8 @@ export function TodosPage() {
   const newestTitle = todos[0]?.title ?? "none";
 
   return (
-    <section className="page">
-      <header className="pageHeader">
+    <section className={styles.page}>
+      <header className={styles.pageHeader}>
         <div>
           <h1>Todos</h1>
           <p>
@@ -108,13 +109,11 @@ export function TodosPage() {
       <TodoFilters onChange={setFilters} value={filters} />
       <CreateTodoForm onCreate={handleCreate} />
 
-      {serverError && <div className="alert">{serverError}</div>}
-
       <TodoList items={todos} />
 
-      <div className="sentinel" ref={sentinelRef} />
+      <div className={styles.sentinel} ref={sentinelRef} />
 
-      {loading && <p className="loading">Loading more...</p>}
+      {loading && <p className={styles.loading}>Loading more...</p>}
     </section>
   );
 }
