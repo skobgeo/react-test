@@ -50,8 +50,10 @@ export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
     });
   }
 
+  const handleCreateClick = handleSubmit(submit);
+
   return (
-    <form className="createForm" onSubmit={handleSubmit(submit)}>
+    <div className="createForm">
       <Field error={errors.title?.message} label="New todo">
         <input
           className="control"
@@ -97,9 +99,9 @@ export function CreateTodoForm({ onCreate }: CreateTodoFormProps) {
         Notify owner
       </label>
 
-      <Button disabled={isSubmitting} type="submit">
+      <Button disabled={isSubmitting} onClick={handleCreateClick} type="button">
         {isSubmitting ? "Creating..." : "Create"}
       </Button>
-    </form>
+    </div>
   );
 }
