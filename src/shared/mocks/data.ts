@@ -1,30 +1,20 @@
-import type { Client, ClientStatus } from "../../entities/client/model/types";
+import type {
+  Todo,
+  TodoPriority,
+  TodoStatus,
+} from "../../entities/todo/model/types";
 
-const statuses: ClientStatus[] = ["active", "paused", "archived"];
-const companies = [
-  "Northstar Labs",
-  "Riverbank Studio",
-  "Apex Retail",
-  "Beacon Health",
-  "Copperline Foods",
-  "Orbit Logistics",
-  "Signal Works",
-  "Summit Finance",
-];
+const priorities: TodoPriority[] = ["low", "normal", "high"];
+const statuses: TodoStatus[] = ["active", "done"];
 
-export const clients: Client[] = Array.from({ length: 72 }, (_, index) => {
+export const todos: Todo[] = Array.from({ length: 64 }, (_, index) => {
   const number = index + 1;
+
   return {
     id: String(number),
-    name: `Client ${number}`,
-    company: companies[index % companies.length],
-    email: `client${number}@example.com`,
+    title: `Review React task item ${number}`,
+    priority: priorities[index % priorities.length],
     status: statuses[index % statuses.length],
-    revenue: 3000 + index * 470,
-    createdAt: new Date(2025, index % 12, (index % 27) + 1).toISOString(),
-    notes:
-      index % 5 === 0
-        ? "Requires manual approval for contract changes."
-        : "Regular account with quarterly check-ins.",
+    createdAt: new Date(2026, index % 5, (index % 27) + 1).toISOString(),
   };
 });

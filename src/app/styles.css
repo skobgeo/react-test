@@ -1,14 +1,23 @@
 body {
   margin: 0;
-  background: #f6f7f9;
-  color: #1f2933;
+  background: #f4f6f8;
+  color: #17202a;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+.appShell {
+  min-height: 100vh;
 }
 
 .appHeader {
   align-items: center;
-  border-bottom: 1px solid #d8dee6;
+  background: #ffffff;
+  border-bottom: 1px solid #d9e0e7;
   display: flex;
-  padding: 0 24px;
+  height: 64px;
+  padding: 0 28px;
 }
 
 .brandLink {
@@ -19,18 +28,183 @@ body {
   text-decoration: none;
 }
 
-.clientRow {
-  border: 1px solid #dfe5ec;
-  color: inherit;
+.appMain {
+  margin: 0 auto;
+  max-width: 960px;
+  padding: 32px 20px 56px;
+}
+
+.page {
+  display: grid;
+  gap: 18px;
+}
+
+.pageHeader {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pageHeader h1 {
+  font-size: 32px;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+
+.pageHeader p {
+  color: #657180;
+  margin: 0;
+}
+
+.filters,
+.createForm {
+  align-items: end;
+  background: #ffffff;
+  border: 1px solid #d9e0e7;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr 160px;
+  padding: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field span {
+  color: #3c4652;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field small {
+  color: #b3261e;
+  font-size: 12px;
+}
+
+.checkboxField {
+  align-items: center;
+  color: #3c4652;
+  display: flex;
+  font-weight: 700;
+  gap: 8px;
+  height: 40px;
+}
+
+.control {
+  background: #ffffff;
+  border: 1px solid #bcc7d3;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: #17202a;
+  font: inherit;
+  height: 40px;
+  padding: 0 10px;
+  width: 100%;
+}
+
+.control:focus {
+  border-color: #226f7a;
+  outline: 2px solid #c6eef1;
+}
+
+.button {
+  background: #1f6f5b;
+  border: 1px solid #1f6f5b;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  height: 40px;
+  padding: 0 16px;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.alert {
+  background: #fff1f0;
+  border: 1px solid #ffc8c4;
+  border-radius: 6px;
+  color: #9f1d16;
+  padding: 10px 12px;
+}
+
+.todoList {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.todoItem {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d9e0e7;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  min-height: 66px;
+  padding: 12px 14px;
+}
+
+.todoItem strong,
+.todoItem span {
   display: block;
-  padding: 14px 16px;
-  text-decoration: none;
 }
 
-.clientRow + .clientRow {
-  border-top: 0;
+.todoItem strong {
+  margin-bottom: 4px;
 }
 
-.clientRow:hover {
-  background: #edf6f4;
+.todoItem span {
+  color: #657180;
+  font-size: 13px;
+}
+
+.todoMeta {
+  display: flex;
+  gap: 8px;
+}
+
+.todoMeta span {
+  background: #eef2f6;
+  border-radius: 999px;
+  color: #3c4652;
+  padding: 4px 8px;
+  text-transform: capitalize;
+}
+
+.todoMeta span[data-priority="high"] {
+  background: #fff4ce;
+  color: #7a4d00;
+}
+
+.emptyState,
+.loading {
+  color: #657180;
+  text-align: center;
+}
+
+.sentinel {
+  height: 2px;
+}
+
+@media (max-width: 720px) {
+  .filters,
+  .createForm {
+    grid-template-columns: 1fr;
+  }
+
+  .todoItem {
+    align-items: stretch;
+    gap: 12px;
+    flex-direction: column;
+  }
 }
